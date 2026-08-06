@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merchant Dashboard | Pi Market Directory</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen pb-12">
+
+    <!-- Header Navbar -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 to-purple-600 flex items-center justify-center font-bold text-white shadow-lg">
+                    π
+                </a>
+                <span class="text-base font-extrabold text-amber-400">Merchant Dashboard</span>
+            </div>
+            <a href="index.html" class="text-xs text-slate-400 hover:text-white transition">
+                <i class="fa-solid fa-globe mr-1"></i> Public Directory
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Add Item Form -->
+    <main class="max-w-3xl mx-auto px-4 py-8">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl">
+            <h1 class="text-xl font-bold text-amber-400 mb-1">Add Store or Product Listing</h1>
+            <p class="text-xs text-slate-400 mb-6">Fill in your business details below to display it live on the Pi Market Directory.</p>
+
+            <form id="listingForm" onsubmit="publishListing(event)" class="space-y-5">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Business or Item Name</label>
+                    <input type="text" id="itemTitle" required placeholder="e.g. Modern Electronics & Accessories" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Category</label>
+                        <select id="itemCategory" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500">
+                            <option value="Fashion & Goods">Fashion & Goods</option>
+                            <option value="Electronics & Tech">Electronics & Tech</option>
+                            <option value="Food & Dining">Food & Dining</option>
+                            <option value="Hardware & Supplies">Hardware & Supplies</option>
+                            <option value="Digital Services">Digital Services</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Location (City, Country)</label>
+                        <input type="text" id="itemLocation" required placeholder="e.g. Kano, Nigeria" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Pi Rate / Price Terms</label>
+                        <input type="text" id="itemPrice" required placeholder="e.g. 100% Pi Accepted or 25 Pi" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">WhatsApp Number (With Country Code)</label>
+                        <input type="text" id="itemContact" required placeholder="e.g. +2348123456789" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Description & Services</label>
+                    <textarea id="itemDesc" rows="3" required placeholder="Describe what you sell, shipping options, or shop location..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-amber-500"></textarea>
+                </div>
+
+                <button type="submit" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold py-3 rounded-2xl text-sm transition shadow-lg flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span>Publish Listing Live</span>
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        function publishListing(e) {
+            e.preventDefault();
+            
+            const newItem = {
+                id: Date.now(),
+                title: document.getElementById('itemTitle').value,
+                category: document.getElementById('itemCategory').value,
+                location: document.getElementById('itemLocation').value,
+                price: document.getElementById('itemPrice').value,
+                contact: document.getElementById('itemContact').value,
+                description: document.getElementById('itemDesc').value
+            };
+
+            const existing = JSON.parse(localStorage.getItem('pioneer_market_items') || '[]');
+            existing.unshift(newItem);
+            localStorage.setItem('pioneer_market_items', JSON.stringify(existing));
+
+            alert("Success! Your store listing has been published live to the global directory.");
+            window.location.href = "index.html";
+        }
+    </script>
+</body>
+</html>
