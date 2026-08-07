@@ -1,211 +1,359 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="ha">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pi Market Directory | Global Pioneer Ecosystem</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Pi Market Directory - Global Ecosystem</title>
+    <!-- Pi Network SDK -->
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Custom Style for Glassmorphism -->
+    
     <style>
-        .glass-card {
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+        :root {
+            --bg-main: #0b0f19;
+            --card-bg: #161e2e;
+            --accent-purple: #8b5cf6;
+            --accent-gold: #f59e0b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
         }
-        .bg-gradient-pi {
-            background: linear-gradient(135deg, #1e112a 0%, #0f172a 100%);
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            padding-bottom: 80px;
+        }
+
+        /* Header & Navigation */
+        header {
+            background-color: #111827;
+            padding: 1rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #1f2937;
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--accent-gold);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-auth-btn {
+            background: linear-gradient(135deg, var(--accent-purple), #6d28d9);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Hero & Search Area */
+        .hero {
+            padding: 1.5rem 1rem;
+            text-align: center;
+            background: radial-gradient(circle at top, #1e1b4b, var(--bg-main));
+        }
+
+        .hero h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .search-box {
+            margin: 1rem auto;
+            max-width: 500px;
+            display: flex;
+            background-color: var(--card-bg);
+            border: 1px solid #374151;
+            border-radius: 25px;
+            overflow: hidden;
+            padding: 5px 15px;
+            align-items: center;
+        }
+
+        .search-box input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: white;
+            padding: 8px;
+            font-size: 0.9rem;
+        }
+
+        .search-box i {
+            color: var(--text-muted);
+        }
+
+        /* Categories Bar */
+        .categories {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 0.5rem 1rem;
+            margin-bottom: 1rem;
+            scrollbar-width: none;
+        }
+
+        .cat-btn {
+            background-color: var(--card-bg);
+            color: var(--text-muted);
+            border: 1px solid #1f2937;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            white-space: nowrap;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .cat-btn.active {
+            background-color: var(--accent-purple);
+            color: white;
+            border-color: var(--accent-purple);
+        }
+
+        /* Product Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 12px;
+            padding: 0 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .product-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #1e293b;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            background-color: #0f172a;
+        }
+
+        .product-info {
+            padding: 10px;
+        }
+
+        .product-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #e2e8f0;
+        }
+
+        .product-price {
+            color: var(--accent-gold);
+            font-weight: bold;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .buy-btn {
+            width: 100%;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 8px;
+            border-radius: 6px;
+            margin-top: 8px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #111827;
+            border-top: 1px solid #1f2937;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+        }
+
+        .nav-item {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .nav-item.active {
+            color: var(--accent-purple);
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans min-h-screen selection:bg-amber-500 selection:text-slate-950">
+<body>
 
-    <!-- Navbar -->
-    <header class="border-b border-slate-800/80 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 py-3.5 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 via-purple-600 to-amber-400 flex items-center justify-center font-black text-xl text-white shadow-lg shadow-purple-900/40">
-                    π
-                </div>
-                <div>
-                    <span class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-amber-400 via-amber-200 to-purple-400 bg-clip-text text-transparent">Pi Market</span>
-                    <span class="text-[10px] uppercase font-bold tracking-widest bg-purple-900/60 text-purple-300 px-2 py-0.5 rounded-full border border-purple-700/50 ml-1.5">Directory</span>
-                </div>
-            </div>
-
-            <!-- Header Action Buttons -->
-            <div class="flex items-center gap-2 sm:gap-3">
-                <a href="login.html" class="text-xs font-semibold text-slate-300 hover:text-amber-400 px-3 py-2 rounded-xl transition">
-                    Merchant Login
-                </a>
-                <a href="dashboard.html" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs sm:text-sm transition shadow-lg shadow-amber-500/20 flex items-center gap-2">
-                    <i class="fa-solid fa-plus-circle"></i>
-                    <span>List Store / Item</span>
-                </a>
-            </div>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <i class="fa-solid fa-store"></i> Pi Directory
         </div>
+        <button class="user-auth-btn" id="authBtn" onclick="authenticateWithPi()">
+            <i class="fa-solid fa-wallet"></i> Login
+        </button>
     </header>
 
-    <!-- Hero Banner -->
-    <section class="max-w-7xl mx-auto px-4 pt-12 pb-8 text-center relative overflow-hidden">
-        <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute -top-12 left-1/3 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
-
-        <div class="inline-flex items-center gap-2 bg-purple-900/40 border border-purple-500/30 px-3.5 py-1.5 rounded-full text-xs font-medium text-amber-300 mb-6 shadow-inner">
-            <i class="fa-solid fa-shield-halved text-amber-400"></i>
-            <span>Verified Pi Ecosystem Directory</span>
+    <!-- Hero Area -->
+    <div class="hero">
+        <h1>Global Pi Marketplace</h1>
+        <p style="font-size: 0.8rem; color: var(--text-muted);">Buy products & services directly with Pi Network</p>
+        
+        <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" placeholder="Search products, merchants, or services...">
         </div>
-        
-        <h1 class="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight max-w-4xl mx-auto leading-[1.15] mb-5">
-            Connect & Trade with <span class="bg-gradient-to-r from-amber-400 via-yellow-200 to-amber-500 bg-clip-text text-transparent">Pi Merchants</span> Worldwide
-        </h1>
-        
-        <p class="text-slate-400 text-sm sm:text-base max-w-2xl mx-auto mb-8 font-normal">
-            Discover verified global businesses, retail shops, and professional service providers accepting Pi Network payments.
-        </p>
+    </div>
 
-        <!-- Search Bar -->
-        <div class="max-w-3xl mx-auto glass-card p-2 sm:p-2.5 rounded-2xl shadow-2xl border border-slate-800">
-            <div class="grid grid-cols-1 sm:grid-cols-12 gap-2">
-                <div class="sm:col-span-10 relative">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-500 text-sm"></i>
-                    <input id="searchInput" onkeyup="searchMarket()" type="text" placeholder="Search by store name, items, city, or country..." class="w-full bg-slate-950/80 border border-slate-800/80 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-amber-500 transition placeholder:text-slate-500">
-                </div>
-                <button onclick="searchMarket()" class="sm:col-span-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2.5 px-4 rounded-xl text-sm transition shadow-md">
-                    Search
+    <!-- Category Filter -->
+    <div class="categories">
+        <button class="cat-btn active">All</button>
+        <button class="cat-btn">Electronics</button>
+        <button class="cat-btn">Fashion</button>
+        <button class="cat-btn">Services</button>
+        <button class="cat-btn">Groceries</button>
+    </div>
+
+    <!-- Product Showcase -->
+    <div class="products-grid">
+        
+        <!-- Product 1 -->
+        <div class="product-card">
+            <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500" class="product-img" alt="Headphones">
+            <div class="product-info">
+                <div class="product-title">Wireless Headphones</div>
+                <div class="product-price"><i class="fa-solid fa-coins"></i> 15.00 Pi</div>
+                <button class="buy-btn" onclick="payWithPi('Wireless Headphones', 15.00)">
+                    <i class="fa-solid fa-bag-shopping"></i> Pay with Pi
                 </button>
             </div>
         </div>
-    </section>
 
-    <!-- Marketplace Main Listings Section -->
-    <main class="max-w-7xl mx-auto px-4 py-8">
-        <div class="flex items-center justify-between mb-6 border-b border-slate-800/80 pb-4">
-            <div>
-                <h2 class="text-lg font-extrabold text-slate-100 flex items-center gap-2">
-                    <i class="fa-solid fa-store text-amber-400"></i>
-                    <span>Featured Stores & Items</span>
-                </h2>
-                <p class="text-xs text-slate-400">Browse verified listings accepting Pi payments</p>
+        <!-- Product 2 -->
+        <div class="product-card">
+            <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500" class="product-img" alt="Smart Watch">
+            <div class="product-info">
+                <div class="product-title">Smart Fitness Watch</div>
+                <div class="product-price"><i class="fa-solid fa-coins"></i> 25.50 Pi</div>
+                <button class="buy-btn" onclick="payWithPi('Smart Fitness Watch', 25.50)">
+                    <i class="fa-solid fa-bag-shopping"></i> Pay with Pi
+                </button>
             </div>
-            <a href="dashboard.html" class="text-xs font-semibold text-amber-400 hover:text-amber-300 flex items-center gap-1 transition">
-                <span>Add Your Listing</span>
-                <i class="fa-solid fa-arrow-right text-[10px]"></i>
-            </a>
         </div>
 
-        <!-- Dynamic Grid Container -->
-        <div id="directoryGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Listings render here -->
+        <!-- Product 3 -->
+        <div class="product-card">
+            <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500" class="product-img" alt="Sneakers">
+            <div class="product-info">
+                <div class="product-title">Sports Running Shoes</div>
+                <div class="product-price"><i class="fa-solid fa-coins"></i> 18.00 Pi</div>
+                <button class="buy-btn" onclick="payWithPi('Sports Running Shoes', 18.00)">
+                    <i class="fa-solid fa-bag-shopping"></i> Pay with Pi
+                </button>
+            </div>
         </div>
-    </main>
 
-    <!-- Footer -->
-    <footer class="border-t border-slate-900 mt-16 py-8 text-center text-xs text-slate-500">
-        <p>&copy; 2026 Pi Market Directory. Empowering Global Pioneers & Merchants.</p>
-    </footer>
+    </div>
 
-    <!-- App Dynamic Script -->
+    <!-- Bottom Navigation Bar -->
+    <div class="bottom-nav">
+        <a href="#" class="nav-item active">
+            <i class="fa-solid fa-house"></i> Home
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-list"></i> Categories
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-cart-shopping"></i> Cart
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fa-solid fa-user"></i> Profile
+        </a>
+    </div>
+
+    <!-- JavaScript & Pi SDK Logic -->
     <script>
-        const initialListings = [
-            {
-                id: 1,
-                title: "Global Import & Trade Express",
-                category: "Fashion & Retail",
-                location: "Nigeria / Global",
-                price: "100% Pi Accepted",
-                contact: "+2348000000000",
-                description: "Direct importer of quality clothing, luxury accessories, and consumer goods accepting Pi Network coin."
-            },
-            {
-                id: 2,
-                title: "Utility & Water Hardware Supply",
-                category: "Hardware & Supplies",
-                location: "Libya",
-                price: "Pi Payment Ready",
-                contact: "+218000000000",
-                description: "Commercial shop specializing in household utilities, water supply equipment, and maintenance hardware."
-            },
-            {
-                id: 3,
-                title: "B2B Lead Gen & Digital Media",
-                category: "Digital Services",
-                location: "Global Remote",
-                price: "Custom Pi Rates",
-                contact: "+2348000000000",
-                description: "Professional outreach services, business lead generation, and custom musical audio arrangement."
-            }
-        ];
+        const Pi = window.Pi;
+        Pi.init({ version: "2.0", sandbox: true });
 
-        function getListings() {
-            const saved = localStorage.getItem('pioneer_market_items');
-            return saved ? JSON.parse(saved) : initialListings;
+        // Auto authenticate on launch for Pi App Studio verification
+        window.addEventListener('DOMContentLoaded', () => {
+            authenticateWithPi();
+        });
+
+        async function authenticateWithPi() {
+            try {
+                const scopes = ['username', 'payments'];
+                const auth = await Pi.authenticate(scopes, function(payment) {
+                    console.log("Incomplete payment found", payment);
+                });
+                
+                document.getElementById('authBtn').innerHTML = `<i class="fa-solid fa-check-circle"></i> @${auth.user.username}`;
+                document.getElementById('authBtn').style.background = "#10b981";
+            } catch (error) {
+                console.error("Pi Auth Error:", error);
+            }
         }
 
-        function renderListings(items = getListings()) {
-            const container = document.getElementById('directoryGrid');
-            container.innerHTML = '';
-
-            if(items.length === 0) {
-                container.innerHTML = `
-                    <div class="col-span-full text-center py-12 glass-card rounded-2xl">
-                        <i class="fa-solid fa-store-slash text-3xl text-slate-600 mb-3"></i>
-                        <p class="text-sm text-slate-400">No stores or products match your search.</p>
-                    </div>
-                `;
-                return;
-            }
-
-            items.forEach(item => {
-                const cardHtml = `
-                    <div class="glass-card rounded-2xl overflow-hidden hover:border-amber-500/40 transition duration-300 flex flex-col justify-between group">
-                        <div class="p-5">
-                            <div class="flex items-start justify-between gap-2 mb-3">
-                                <div>
-                                    <span class="text-[10px] font-bold text-emerald-400 bg-emerald-950/80 border border-emerald-800/60 px-2 py-0.5 rounded-md uppercase tracking-wider">
-                                        Verified Pioneer
-                                    </span>
-                                    <h3 class="font-bold text-base text-slate-100 mt-2 group-hover:text-amber-400 transition">${item.title}</h3>
-                                </div>
-                                <span class="text-xs text-slate-400 bg-slate-800/80 border border-slate-700/50 px-2 py-1 rounded-lg shrink-0">
-                                    <i class="fa-solid fa-location-dot text-amber-400 mr-1 text-[10px]"></i>${item.location}
-                                </span>
-                            </div>
-
-                            <p class="text-xs text-slate-400 mb-4 line-clamp-3 leading-relaxed">${item.description}</p>
-                        </div>
-
-                        <div class="px-5 py-3.5 bg-slate-900/90 border-t border-slate-800/80 flex items-center justify-between">
-                            <div>
-                                <span class="text-[10px] text-slate-500 block uppercase font-medium">Payment Rate</span>
-                                <span class="text-xs font-bold text-amber-400">${item.price}</span>
-                            </div>
-                            <a href="https://wa.me/${item.contact.replace(/[^0-9]/g, '')}" target="_blank" class="bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 font-semibold px-3 py-1.5 rounded-xl text-xs transition flex items-center gap-1.5">
-                                <i class="fa-brands fa-whatsapp text-sm"></i>
-                                <span>Contact</span>
-                            </a>
-                        </div>
-                    </div>
-                `;
-                container.innerHTML += cardHtml;
+        function payWithPi(memo, amount) {
+            Pi.createPayment({
+                amount: amount,
+                memo: `Purchase ${memo}`,
+                metadata: { type: "e-commerce purchase" }
+            }, {
+                onReadyForServerApproval: function(paymentId) {
+                    console.log("Ready for approval", paymentId);
+                },
+                onReadyForServerCompletion: function(paymentId, txid) {
+                    alert(`Biyayya ya kammala sak! Transaction ID: ${txid}`);
+                },
+                onCancel: function(paymentId) {
+                    console.log("Cancelled", paymentId);
+                },
+                onError: function(error, payment) {
+                    console.error("Payment error", error);
+                }
             });
         }
-
-        function searchMarket() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const allItems = getListings();
-            const filtered = allItems.filter(i => 
-                i.title.toLowerCase().includes(query) || 
-                i.location.toLowerCase().includes(query) || 
-                i.category.toLowerCase().includes(query) ||
-                i.description.toLowerCase().includes(query)
-            );
-            renderListings(filtered);
-        }
-
-        renderListings();
     </script>
 </body>
 </html>
