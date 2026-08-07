@@ -3,295 +3,487 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pi Market Directory Nigeria</title>
+    <title>Pi Directory - Global Marketplace</title>
     <!-- Pi Network Official SDK -->
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --primary-green: #10b981;
+            --bg-main: #0b0f19;
+            --card-bg: #161e2e;
+            --accent-purple: #8b5cf6;
             --accent-gold: #f59e0b;
-            --badge-blue: #38bdf8;
-            --text-color: #f8fafc;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            padding-bottom: 80px;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            padding-bottom: 90px;
         }
 
+        /* Header */
         header {
-            background-color: #1e1b4b;
-            padding: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background-color: #111827;
+            padding: 1rem 1.5rem;
             position: sticky;
             top: 0;
             z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #1f2937;
         }
 
         .logo {
-            color: var(--accent-gold);
+            font-size: 1.2rem;
             font-weight: bold;
-            font-size: 1.1rem;
+            color: var(--accent-gold);
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .verify-badge-btn {
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        .user-auth-btn {
+            background: linear-gradient(135deg, var(--accent-purple), #6d28d9);
             color: white;
             border: none;
-            padding: 8px 12px;
+            padding: 0.5rem 1rem;
             border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Hero & Search */
+        .hero {
+            padding: 1.5rem 1rem;
+            text-align: center;
+            background: radial-gradient(circle at top, #1e1b4b, var(--bg-main));
+        }
+
+        .hero h1 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+
+        .search-box {
+            margin: 1rem auto;
+            max-width: 500px;
+            display: flex;
+            background-color: var(--card-bg);
+            border: 1px solid #374151;
+            border-radius: 25px;
+            overflow: hidden;
+            padding: 5px 15px;
+            align-items: center;
+        }
+
+        .search-box input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: white;
+            padding: 8px;
+            font-size: 0.9rem;
+        }
+
+        .search-box i { color: var(--text-muted); }
+
+        /* Categories Bar */
+        .categories {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 0.5rem 1rem;
+            margin-bottom: 1rem;
+            scrollbar-width: none;
+        }
+
+        .cat-btn {
+            background-color: var(--card-bg);
+            color: var(--text-muted);
+            border: 1px solid #1f2937;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            white-space: nowrap;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .cat-btn.active {
+            background-color: var(--accent-purple);
+            color: white;
+            border-color: var(--accent-purple);
+        }
+
+        /* Views Layout */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Product Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 12px;
+            padding: 0 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .product-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #1e293b;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            background-color: #0f172a;
+        }
+
+        .product-info { padding: 10px; }
+
+        .product-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #e2e8f0;
+        }
+
+        .product-price {
+            color: var(--accent-gold);
+            font-weight: bold;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .buy-btn {
+            width: 100%;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 8px;
+            border-radius: 6px;
+            margin-top: 8px;
             font-size: 0.8rem;
             font-weight: bold;
             cursor: pointer;
             display: flex;
+            justify-content: center;
             align-items: center;
             gap: 5px;
         }
 
-        .container {
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #111827;
+            border-top: 1px solid #1f2937;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 100;
+        }
+
+        .nav-item {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .nav-item.active { color: var(--accent-purple); }
+
+        /* Cart Box */
+        .cart-container, .profile-container {
             padding: 1rem;
             max-width: 600px;
             margin: 0 auto;
         }
 
-        .search-section {
-            margin-bottom: 1rem;
-        }
-
-        .search-box, .select-box {
-            width: 100%;
+        .cart-item {
+            background: var(--card-bg);
             padding: 12px;
             border-radius: 8px;
-            border: 1px solid #334155;
-            background-color: var(--card-bg);
-            color: white;
-            margin-bottom: 8px;
-        }
-
-        /* Product Card */
-        .product-card {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 14px;
-            margin-bottom: 1rem;
-            border: 1px solid #334155;
-            position: relative;
-        }
-
-        .featured-card {
-            border: 2px solid var(--accent-gold);
-        }
-
-        .product-img {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-            border-radius: 8px;
             margin-bottom: 10px;
-        }
-
-        .merchant-name {
-            color: #94a3b8;
-            font-size: 0.85rem;
-            margin-bottom: 6px;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 5px;
-        }
-
-        .verified-icon {
-            color: var(--badge-blue);
-        }
-
-        .price {
-            color: var(--accent-gold);
-            font-weight: bold;
-            font-size: 1.1rem;
-            margin: 8px 0;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .buy-btn {
-            flex: 1;
-            background-color: #7c3aed;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .wa-btn {
-            flex: 1;
-            background-color: #22c55e;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-            text-align: center;
-            font-size: 0.85rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 5px;
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            justify-content: center;
-            align-items: center;
-            z-index: 200;
-        }
-
-        .modal-content {
-            background: var(--card-bg);
-            padding: 1.5rem;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 400px;
         }
     </style>
 </head>
 <body>
 
+    <!-- Header -->
     <header>
-        <div class="logo"><i class="fa-solid fa-shop"></i> Naija Pi Directory</div>
-        <button class="verify-badge-btn" onclick="openVerifyModal()">
-            <i class="fa-solid fa-circle-check verified-icon" style="color:white;"></i> Get Verified (1 Pi)
+        <div class="logo">
+            <i class="fa-solid fa-store"></i> Pi Directory
+        </div>
+        <button class="user-auth-btn" id="authBtn" onclick="authenticateWithPi()">
+            <i class="fa-solid fa-wallet"></i> Login
         </button>
     </header>
 
-    <div class="container">
-        <!-- Search -->
-        <div class="search-section">
-            <input type="text" class="search-box" placeholder="Nemi abinci, nama, ko kayan sana'a...">
-            <select class="select-box">
-                <option value="">Dukkan Garuruwa (All Cities)</option>
-                <option value="kano">Kano</option>
-                <option value="lagos">Lagos</option>
-                <option value="abuja">Abuja</option>
-                <option value="kaduna">Kaduna</option>
-            </select>
-        </div>
-
-        <!-- Sample Verified Merchant Item -->
-        <div class="product-card featured-card">
-            <span style="background:var(--accent-gold); color:black; font-size:0.7rem; font-weight:bold; padding:3px 8px; border-radius:4px; position:absolute; top:20px; right:20px;">FEATURED</span>
-            <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=500" class="product-img" alt="Nama">
-            <h3>Naman Sa Dafaffe & Soyayye (Pack)</h3>
-            <div class="merchant-name">
-                <i class="fa-solid fa-store"></i> Hajia Maryam Food Corner 
-                <i class="fa-solid fa-circle-check verified-icon" title="Verified Merchant"></i>
-            </div>
-            <div class="price"><i class="fa-solid fa-coins"></i> 3.50 Pi</div>
-            <div class="btn-group">
-                <button class="buy-btn" onclick="payMerchant('Naman Dafaffe', 3.50)"><i class="fa-solid fa-wallet"></i> Biya da Pi</button>
-                <a href="https://wa.me/2340000000000?text=Sannu%20Hajia%20Maryam,%20ina%20son%20yin%20odare" class="wa-btn"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+    <!-- HOME TAB -->
+    <div id="homeTab" class="tab-content active">
+        <div class="hero">
+            <h1>Global Pi Marketplace</h1>
+            <p style="font-size: 0.8rem; color: var(--text-muted);">Buy products & services directly with Pi Network</p>
+            
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" onkeyup="filterProducts()" placeholder="Search products, merchants, or services...">
             </div>
         </div>
 
-        <!-- Sample Regular Merchant Item -->
-        <div class="product-card">
-            <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500" class="product-img" alt="Smart Watch">
-            <h3>Smart Watch (Digital)</h3>
-            <div class="merchant-name"><i class="fa-solid fa-store"></i> Usman Tech (Kaduna)</div>
-            <div class="price"><i class="fa-solid fa-coins"></i> 12.00 Pi</div>
-            <div class="btn-group">
-                <button class="buy-btn" onclick="payMerchant('Smart Watch', 12.00)"><i class="fa-solid fa-wallet"></i> Biya da Pi</button>
-                <a href="https://wa.me/2340000000000?text=Sannu%20Usman,%20ina%20son%20siyan%20watch" class="wa-btn"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
-            </div>
+        <div class="categories">
+            <button class="cat-btn active" onclick="filterCategory('all', this)">All</button>
+            <button class="cat-btn" onclick="filterCategory('electronics', this)">Electronics</button>
+            <button class="cat-btn" onclick="filterCategory('fashion', this)">Fashion</button>
+            <button class="cat-btn" onclick="filterCategory('services', this)">Services</button>
+            <button class="cat-btn" onclick="filterCategory('groceries', this)">Groceries</button>
         </div>
 
-    </div>
-
-    <!-- Verification Modal -->
-    <div class="modal" id="verifyModal">
-        <div class="modal-content">
-            <h3 style="color:var(--accent-gold);"><i class="fa-solid fa-certificate"></i> Become a Verified Merchant</h3>
-            <p style="font-size:0.85rem; color:#94a3b8; margin: 10px 0;">Samu alamar "Blue Tick" don cinikin cikin amincewa. Kayan dukkan Verified Merchants za su kasance a saman shafi (Featured)!</p>
-            <input type="text" id="vName" class="search-box" placeholder="Sunan Shagonta/Sana'a">
-            <input type="text" id="vPhone" class="search-box" placeholder="Lambar WhatsApp">
-            <button class="buy-btn" style="width:100%; background:var(--primary-green); margin-top:5px;" onclick="payForVerification()">
-                Pay 1.00 Pi for Verification
-            </button>
-            <button class="search-box" style="margin-top:8px; cursor:pointer;" onclick="closeVerifyModal()">Soke (Cancel)</button>
+        <div class="products-grid" id="productsGrid">
+            <!-- Products injected dynamically by JavaScript -->
         </div>
     </div>
 
-    <!-- JavaScript & Pi SDK Logic -->
+    <!-- CATEGORIES TAB -->
+    <div id="categoriesTab" class="tab-content">
+        <div style="padding: 1.5rem; text-align: center;">
+            <h2>Categories</h2>
+            <p style="color: var(--text-muted); margin-top: 10px;">Select a category to explore items:</p>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+                <button class="cat-btn" style="padding: 15px;" onclick="switchTab('home'); filterCategory('electronics');">🔌 Electronics</button>
+                <button class="cat-btn" style="padding: 15px;" onclick="switchTab('home'); filterCategory('fashion');">👟 Fashion</button>
+                <button class="cat-btn" style="padding: 15px;" onclick="switchTab('home'); filterCategory('services');">🛠️ Services</button>
+                <button class="cat-btn" style="padding: 15px;" onclick="switchTab('home'); filterCategory('groceries');">🛒 Groceries</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CART TAB -->
+    <div id="cartTab" class="tab-content">
+        <div class="cart-container">
+            <h2>Your Shopping Cart</h2>
+            <br>
+            <div id="cartItemsList">
+                <p style="color: var(--text-muted);">Your cart is empty.</p>
+            </div>
+            <div id="cartSummary" style="margin-top: 20px; display: none;">
+                <h3>Total: <span id="cartTotal" style="color: var(--accent-gold);">0 Pi</span></h3>
+                <br>
+                <button class="buy-btn" style="padding: 12px; font-size: 1rem;" onclick="checkoutCart()">Checkout with Pi</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROFILE TAB -->
+    <div id="profileTab" class="tab-content">
+        <div class="profile-container" style="text-align: center;">
+            <h2>User Profile</h2>
+            <br>
+            <i class="fa-solid fa-circle-user" style="font-size: 4rem; color: var(--accent-purple);"></i>
+            <h3 id="profileUsername" style="margin-top: 10px;">Guest Pioneer</h3>
+            <p style="color: var(--text-muted); font-size: 0.85rem;" id="profileStatus">Not logged in</p>
+            <br>
+            <button class="buy-btn" style="background: var(--accent-purple);" onclick="authenticateWithPi()">Connect Pi Wallet</button>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <button class="nav-item active" onclick="switchTab('home', this)">
+            <i class="fa-solid fa-house"></i> Home
+        </button>
+        <button class="nav-item" onclick="switchTab('categories', this)">
+            <i class="fa-solid fa-list"></i> Categories
+        </button>
+        <button class="nav-item" onclick="switchTab('cart', this)">
+            <i class="fa-solid fa-cart-shopping"></i> Cart (<span id="cartCount">0</span>)
+        </button>
+        <button class="nav-item" onclick="switchTab('profile', this)">
+            <i class="fa-solid fa-user"></i> Profile
+        </button>
+    </div>
+
     <script>
+        // Pi SDK Initialization
         const Pi = window.Pi;
         Pi.init({ version: "2.0", sandbox: true });
 
-        // Auto auth check on load
+        let currentUser = null;
+        let cart = [];
+
+        const products = [
+            { id: 1, name: "Wireless Headphones", price: 15.00, category: "electronics", img: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500" },
+            { id: 2, name: "Smart Fitness Watch", price: 25.50, category: "electronics", img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500" },
+            { id: 3, name: "Sports Running Shoes", price: 18.00, category: "fashion", img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500" },
+            { id: 4, name: "Fresh Grocery Pack", price: 5.00, category: "groceries", img: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=500" }
+        ];
+
         window.addEventListener('DOMContentLoaded', () => {
-            Pi.authenticate(['username'], function(p){})
-            .then(auth => console.log("User:", auth.user.username))
-            .catch(err => console.error(err));
+            renderProducts(products);
+            authenticateWithPi();
         });
 
-        function openVerifyModal() { document.getElementById('verifyModal').style.display = 'flex'; }
-        function closeVerifyModal() { document.getElementById('verifyModal').style.display = 'none'; }
+        // Display Products
+        function renderProducts(items) {
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = "";
+            
+            if(items.length === 0) {
+                grid.innerHTML = "<p style='color:var(--text-muted); grid-column:1/-1; text-align:center;'>No products found.</p>";
+                return;
+            }
 
-        // 1. Direct payment to merchant
-        function payMerchant(itemName, amount) {
-            Pi.createPayment({
-                amount: amount,
-                memo: `Purchase of ${itemName}`,
-                metadata: { type: "direct_purchase" }
-            }, {
-                onReadyForServerCompletion: function(paymentId, txid) {
-                    alert(`An kammala biyyan ${itemName} cikin nasara! TXID: ${txid}`);
-                }
+            items.forEach(p => {
+                grid.innerHTML += `
+                    <div class="product-card">
+                        <img src="${p.img}" class="product-img" alt="${p.name}">
+                        <div class="product-info">
+                            <div class="product-title">${p.name}</div>
+                            <div class="product-price"><i class="fa-solid fa-coins"></i> ${p.price.toFixed(2)} Pi</div>
+                            <button class="buy-btn" onclick="addToCart(${p.id})">
+                                <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                `;
             });
         }
 
-        // 2. Merchant pays admin 1 Pi for verification
-        function payForVerification() {
-            const name = document.getElementById('vName').value;
-            if(!name) { alert("Saka sunan shagonta!"); return; }
+        // Search Filter
+        function filterProducts() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = products.filter(p => p.name.toLowerCase().includes(query));
+            renderProducts(filtered);
+        }
+
+        // Category Filter
+        function filterCategory(cat, btn) {
+            if(btn) {
+                document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
+            if(cat === 'all') {
+                renderProducts(products);
+            } else {
+                const filtered = products.filter(p => p.category === cat);
+                renderProducts(filtered);
+            }
+        }
+
+        // Switch Navigation Tabs
+        function switchTab(tabName, btn) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            if(btn) btn.classList.add('active');
+        }
+
+        // Cart Actions
+        function addToCart(productId) {
+            const item = products.find(p => p.id === productId);
+            cart.push(item);
+            updateCart();
+            alert(`${item.name} added to cart!`);
+        }
+
+        function updateCart() {
+            document.getElementById('cartCount').innerText = cart.length;
+            const list = document.getElementById('cartItemsList');
+            const summary = document.getElementById('cartSummary');
+            
+            if(cart.length === 0) {
+                list.innerHTML = "<p style='color: var(--text-muted);'>Your cart is empty.</p>";
+                summary.style.display = "none";
+                return;
+            }
+
+            list.innerHTML = "";
+            let total = 0;
+            cart.forEach((item, index) => {
+                total += item.price;
+                list.innerHTML += `
+                    <div class="cart-item">
+                        <div>
+                            <strong>${item.name}</strong>
+                            <div style="color:var(--accent-gold);">${item.price} Pi</div>
+                        </div>
+                        <button style="background:red; color:white; border:none; padding:5px 10px; border-radius:5px;" onclick="removeFromCart(${index})">Remove</button>
+                    </div>
+                `;
+            });
+
+            document.getElementById('cartTotal').innerText = `${total.toFixed(2)} Pi`;
+            summary.style.display = "block";
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCart();
+        }
+
+        // Pi Authentication
+        async function authenticateWithPi() {
+            try {
+                const scopes = ['username', 'payments'];
+                const auth = await Pi.authenticate(scopes, function(payment) {});
+                currentUser = auth.user;
+                
+                document.getElementById('authBtn').innerHTML = `<i class="fa-solid fa-circle-check"></i> @${currentUser.username}`;
+                document.getElementById('authBtn').style.background = "#10b981";
+                
+                document.getElementById('profileUsername').innerText = `@${currentUser.username}`;
+                document.getElementById('profileStatus').innerText = "Pi Wallet Connected";
+            } catch (error) {
+                console.error("Pi Auth Error:", error);
+            }
+        }
+
+        // Checkout Cart
+        function checkoutCart() {
+            if(cart.length === 0) return;
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
 
             Pi.createPayment({
-                amount: 1.00,
-                memo: `Merchant Verification Fee - ${name}`,
-                metadata: { type: "verification_fee" }
+                amount: total,
+                memo: `Order payment for ${cart.length} items`,
+                metadata: { cartItems: cart }
             }, {
                 onReadyForServerCompletion: function(paymentId, txid) {
-                    alert("Inuwar shaidarka ta shiga! Za mu amince da shagonta nan ba da jimawa ba.");
-                    closeVerifyModal();
+                    alert(`Payment Successful! Transaction ID: ${txid}`);
+                    cart = [];
+                    updateCart();
+                    switchTab('home');
                 }
             });
         }
