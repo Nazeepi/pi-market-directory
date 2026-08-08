@@ -7,34 +7,134 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #f4f6f9; padding-bottom: 70px; }
-        header { background: #5b21b6; color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 100; }
-        header h1 { font-size: 1.2rem; margin-bottom: 10px; }
+        body { background-color: #f4f6f9; padding-bottom: 80px; }
+
+        header { background: linear-gradient(135deg, #4c1d95, #6d28d9); color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        header h1 { font-size: 1.2rem; margin-bottom: 10px; font-weight: 700; }
         .search-box { display: flex; max-width: 500px; margin: 0 auto; }
-        .search-box input { width: 100%; padding: 10px; border: none; border-radius: 5px 0 0 5px; outline: none; }
-        .search-box button { padding: 10px 15px; background: #eab308; border: none; border-radius: 0 5px 5px 0; color: #fff; cursor: pointer; }
-        
+        .search-box input { width: 100%; padding: 12px 15px; border: none; border-radius: 8px 0 0 8px; outline: none; font-size: 0.9rem; }
+        .search-box button { padding: 12px 18px; background: #f59e0b; border: none; border-radius: 0 8px 8px 0; color: #fff; cursor: pointer; transition: 0.3s; }
+        .search-box button:hover { background: #d97706; }
+
         .categories { display: flex; overflow-x: auto; padding: 12px 10px; background: #fff; gap: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .category-chip { background: #f3f4f6; padding: 6px 14px; border-radius: 20px; white-space: nowrap; font-size: 0.85rem; cursor: pointer; border: 1px solid #e5e7eb; font-weight: 500; }
-        .category-chip.active { background: #5b21b6; color: white; border-color: #5b21b6; }
+        .category-chip { background: #f3f4f6; padding: 8px 16px; border-radius: 20px; white-space: nowrap; font-size: 0.85rem; cursor: pointer; border: 1px solid #e5e7eb; font-weight: 600; transition: all 0.3s ease; }
+        .category-chip:hover { transform: translateY(-2px); }
+        .category-chip.active { background: #6d28d9; color: white; border-color: #6d28d9; }
 
-        .banner { background: linear-gradient(135deg, #7c3aed, #4c1d95); color: white; padding: 20px; text-align: center; margin: 15px 10px; border-radius: 10px; }
-        .banner h2 { font-size: 1.1rem; margin-bottom: 5px; }
-        .banner p { font-size: 0.85rem; margin-bottom: 12px; opacity: 0.9; }
-        .btn-vendor-register { background: #10b981; color: white; padding: 8px 16px; border: none; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.85rem; cursor: pointer; display: inline-block; }
+        /* VENDOR BANNER WITH SHIMMER EFFECT (KYALLI) */
+        .banner { 
+            position: relative;
+            background: linear-gradient(135deg, #6d28d9, #4c1d95); 
+            color: white; 
+            padding: 22px; 
+            text-align: center; 
+            margin: 15px 10px; 
+            border-radius: 12px; 
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(109, 40, 217, 0.3);
+        }
 
-        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; padding: 10px; }
-        .product-card { background: white; border-radius: 8px; padding: 10px; border: 1px solid #e5e7eb; display: flex; flex-direction: column; justify-content: space-between; }
-        .product-card img { width: 100%; height: 120px; object-fit: cover; border-radius: 5px; }
-        .product-title { font-size: 0.9rem; margin: 8px 0 4px; font-weight: 600; color: #1f2937; }
-        .vendor-name { font-size: 0.75rem; color: #6b7280; margin-bottom: 6px; }
-        .product-price { color: #5b21b6; font-weight: bold; font-size: 0.95rem; margin-bottom: 8px; }
-        .btn-pi-pay { background: #5b21b6; color: white; border: none; padding: 8px; border-radius: 5px; width: 100%; cursor: pointer; font-weight: bold; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        /* Shining Light Animation (Tasirin Kyalli) */
+        .banner::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: skewX(-25deg);
+            animation: shine 4s infinite;
+        }
 
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #e5e7eb; z-index: 100; }
-        .btn-nav { background: none; border: none; display: flex; flex-direction: column; align-items: center; color: #6b7280; font-size: 0.75rem; cursor: pointer; text-decoration: none; }
-        .btn-nav.active { color: #5b21b6; font-weight: bold; }
-        .btn-nav i { font-size: 1.2rem; margin-bottom: 2px; }
+        @keyframes shine {
+            100% { left: 150%; }
+        }
+
+        .banner h2 { font-size: 1.1rem; margin-bottom: 6px; font-weight: 700; }
+        .banner p { font-size: 0.85rem; margin-bottom: 15px; opacity: 0.95; }
+        
+        .btn-vendor-register { 
+            background: #10b981; 
+            color: #ffffff !important; 
+            padding: 10px 20px; 
+            border: none; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            font-size: 0.9rem; 
+            cursor: pointer; 
+            display: inline-block;
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.4);
+            transition: transform 0.3s, background 0.3s;
+        }
+        .btn-vendor-register:hover { background: #059669; transform: scale(1.05); }
+
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; padding: 10px; }
+
+        /* PRODUCT CARDS WITH HOVER ANIMATION (SHAKE & GLOW) */
+        .product-card { 
+            background: white; 
+            border-radius: 12px; 
+            padding: 12px; 
+            border: 1px solid #f3f4f6; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; 
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .product-card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.12); 
+        }
+
+        /* Image shake on hover (Kayan ciki suna shake) */
+        .product-card img { 
+            width: 100%; 
+            height: 130px; 
+            object-fit: cover; 
+            border-radius: 8px; 
+            transition: transform 0.4s ease;
+        }
+
+        .product-card:hover img { 
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(-3deg); }
+            50% { transform: rotate(3deg); }
+            75% { transform: rotate(-2deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        .product-title { font-size: 0.9rem; margin: 10px 0 4px; font-weight: 700; color: #1f2937; line-height: 1.2; }
+        .vendor-name { font-size: 0.75rem; color: #6b7280; margin-bottom: 8px; font-weight: 500; }
+        .product-price { color: #6d28d9; font-weight: 800; font-size: 1rem; margin-bottom: 10px; }
+        
+        .btn-pi-pay { 
+            background: linear-gradient(135deg, #6d28d9, #5b21b6); 
+            color: white; 
+            border: none; 
+            padding: 10px; 
+            border-radius: 8px; 
+            width: 100%; 
+            cursor: pointer; 
+            font-weight: bold; 
+            font-size: 0.85rem; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 6px; 
+            box-shadow: 0 4px 10px rgba(109, 40, 217, 0.2);
+            transition: background 0.3s;
+        }
+        .btn-pi-pay:hover { background: #4c1d95; }
+
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #e5e7eb; z-index: 100; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
+        .btn-nav { background: none; border: none; display: flex; flex-direction: column; align-items: center; color: #6b7280; font-size: 0.75rem; cursor: pointer; text-decoration: none; transition: 0.2s; }
+        .btn-nav.active { color: #6d28d9; font-weight: bold; }
+        .btn-nav i { font-size: 1.25rem; margin-bottom: 3px; }
     </style>
 </head>
 <body>
@@ -47,7 +147,6 @@
         </div>
     </header>
 
-    <!-- Categories for all types of businesses -->
     <div class="categories">
         <div class="category-chip active">All Products</div>
         <div class="category-chip">Clothing & Textiles</div>
@@ -56,27 +155,25 @@
         <div class="category-chip">Electronics</div>
     </div>
 
-    <!-- Call to action for vendors (Home businesses, big stores, etc.) -->
+    <!-- Banner with Shiny Animation -->
     <div class="banner">
         <h2>Are you a Merchant or Home Vendor?</h2>
         <p>List your store, clothes, or snacks and receive Pi payments directly!</p>
         <button class="btn-vendor-register btn-nav" data-page="dashboard.html">Register Your Shop / Add Product</button>
     </div>
 
-    <!-- Products Showcase -->
+    <!-- Products Showcase with Shake Animations -->
     <div class="products-grid">
-        <!-- Fashion Vendor Product -->
         <div class="product-card">
-            <img src="https://via.placeholder.com/150?text=Atamfa+Fabric" alt="Atamfa Fabric">
+            <img src="https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?auto=format&fit=crop&w=300&q=80" alt="Atamfa Fabric">
             <div class="product-title">Quality Atamfa Fabric (4 Yards)</div>
             <div class="vendor-name"><i class="fa-solid fa-store"></i> Royal Textiles</div>
             <div class="product-price">12.50 Pi</div>
             <button class="btn-pi-pay" data-price="12.50"><i class="fa-solid fa-wallet"></i> Pay with Pi</button>
         </div>
 
-        <!-- Home-based Snack Vendor Product -->
         <div class="product-card">
-            <img src="https://via.placeholder.com/150?text=Delicious+Snacks" alt="Homemade Snacks">
+            <img src="https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=300&q=80" alt="Homemade Snacks">
             <div class="product-title">Homemade Sweet Snacks Box</div>
             <div class="vendor-name"><i class="fa-solid fa-house-user"></i> Aisha's Home Kitchen</div>
             <div class="product-price">2.00 Pi</div>
@@ -84,7 +181,6 @@
         </div>
     </div>
 
-    <!-- Bottom Navigation Bar -->
     <nav class="bottom-nav">
         <button class="btn-nav active" data-page="index.html">
             <i class="fa-solid fa-house"></i>
@@ -100,7 +196,6 @@
         </button>
     </nav>
 
-    <!-- Pi SDK and Main JavaScript -->
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
     <script src="js/main.js"></script>
 </body>
