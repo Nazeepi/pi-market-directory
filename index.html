@@ -1,492 +1,107 @@
 <!DOCTYPE html>
-<html lang="ha">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pi Directory - Global Marketplace</title>
-    <!-- Pi Network Official SDK -->
-    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-    <!-- FontAwesome Icons -->
+    <title>Pi Global Marketplace & Directory</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
-        :root {
-            --bg-main: #0b0f19;
-            --card-bg: #161e2e;
-            --accent-purple: #8b5cf6;
-            --accent-gold: #f59e0b;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f4f6f9; padding-bottom: 70px; }
+        header { background: #5b21b6; color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 100; }
+        header h1 { font-size: 1.2rem; margin-bottom: 10px; }
+        .search-box { display: flex; max-width: 500px; margin: 0 auto; }
+        .search-box input { width: 100%; padding: 10px; border: none; border-radius: 5px 0 0 5px; outline: none; }
+        .search-box button { padding: 10px 15px; background: #eab308; border: none; border-radius: 0 5px 5px 0; color: #fff; cursor: pointer; }
+        
+        .categories { display: flex; overflow-x: auto; padding: 12px 10px; background: #fff; gap: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .category-chip { background: #f3f4f6; padding: 6px 14px; border-radius: 20px; white-space: nowrap; font-size: 0.85rem; cursor: pointer; border: 1px solid #e5e7eb; font-weight: 500; }
+        .category-chip.active { background: #5b21b6; color: white; border-color: #5b21b6; }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+        .banner { background: linear-gradient(135deg, #7c3aed, #4c1d95); color: white; padding: 20px; text-align: center; margin: 15px 10px; border-radius: 10px; }
+        .banner h2 { font-size: 1.1rem; margin-bottom: 5px; }
+        .banner p { font-size: 0.85rem; margin-bottom: 12px; opacity: 0.9; }
+        .btn-vendor-register { background: #10b981; color: white; padding: 8px 16px; border: none; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.85rem; cursor: pointer; display: inline-block; }
 
-        body {
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            padding-bottom: 90px;
-        }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; padding: 10px; }
+        .product-card { background: white; border-radius: 8px; padding: 10px; border: 1px solid #e5e7eb; display: flex; flex-direction: column; justify-content: space-between; }
+        .product-card img { width: 100%; height: 120px; object-fit: cover; border-radius: 5px; }
+        .product-title { font-size: 0.9rem; margin: 8px 0 4px; font-weight: 600; color: #1f2937; }
+        .vendor-name { font-size: 0.75rem; color: #6b7280; margin-bottom: 6px; }
+        .product-price { color: #5b21b6; font-weight: bold; font-size: 0.95rem; margin-bottom: 8px; }
+        .btn-pi-pay { background: #5b21b6; color: white; border: none; padding: 8px; border-radius: 5px; width: 100%; cursor: pointer; font-weight: bold; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; gap: 5px; }
 
-        /* Header */
-        header {
-            background-color: #111827;
-            padding: 1rem 1.5rem;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #1f2937;
-        }
-
-        .logo {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--accent-gold);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .user-auth-btn {
-            background: linear-gradient(135deg, var(--accent-purple), #6d28d9);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        /* Hero & Search */
-        .hero {
-            padding: 1.5rem 1rem;
-            text-align: center;
-            background: radial-gradient(circle at top, #1e1b4b, var(--bg-main));
-        }
-
-        .hero h1 { font-size: 1.5rem; margin-bottom: 0.5rem; }
-
-        .search-box {
-            margin: 1rem auto;
-            max-width: 500px;
-            display: flex;
-            background-color: var(--card-bg);
-            border: 1px solid #374151;
-            border-radius: 25px;
-            overflow: hidden;
-            padding: 5px 15px;
-            align-items: center;
-        }
-
-        .search-box input {
-            width: 100%;
-            background: transparent;
-            border: none;
-            outline: none;
-            color: white;
-            padding: 8px;
-            font-size: 0.9rem;
-        }
-
-        .search-box i { color: var(--text-muted); }
-
-        /* Categories Bar */
-        .categories {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding: 0.5rem 1rem;
-            margin-bottom: 1rem;
-            scrollbar-width: none;
-        }
-
-        .cat-btn {
-            background-color: var(--card-bg);
-            color: var(--text-muted);
-            border: 1px solid #1f2937;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            white-space: nowrap;
-            font-size: 0.8rem;
-            cursor: pointer;
-        }
-
-        .cat-btn.active {
-            background-color: var(--accent-purple);
-            color: white;
-            border-color: var(--accent-purple);
-        }
-
-        /* Views Layout */
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-
-        /* Product Grid */
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 12px;
-            padding: 0 1rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .product-card {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid #1e293b;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .product-img {
-            width: 100%;
-            height: 140px;
-            object-fit: cover;
-            background-color: #0f172a;
-        }
-
-        .product-info { padding: 10px; }
-
-        .product-title {
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: #e2e8f0;
-        }
-
-        .product-price {
-            color: var(--accent-gold);
-            font-weight: bold;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .buy-btn {
-            width: 100%;
-            background-color: #2563eb;
-            color: white;
-            border: none;
-            padding: 8px;
-            border-radius: 6px;
-            margin-top: 8px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 5px;
-        }
-
-        /* Bottom Nav */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background-color: #111827;
-            border-top: 1px solid #1f2937;
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-            z-index: 100;
-        }
-
-        .nav-item {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 0.75rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            background: none;
-            border: none;
-            cursor: pointer;
-        }
-
-        .nav-item.active { color: var(--accent-purple); }
-
-        /* Cart Box */
-        .cart-container, .profile-container {
-            padding: 1rem;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .cart-item {
-            background: var(--card-bg);
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #e5e7eb; z-index: 100; }
+        .btn-nav { background: none; border: none; display: flex; flex-direction: column; align-items: center; color: #6b7280; font-size: 0.75rem; cursor: pointer; text-decoration: none; }
+        .btn-nav.active { color: #5b21b6; font-weight: bold; }
+        .btn-nav i { font-size: 1.2rem; margin-bottom: 2px; }
     </style>
 </head>
 <body>
 
-    <!-- Header -->
     <header>
-        <div class="logo">
-            <i class="fa-solid fa-store"></i> Pi Directory
+        <h1>Pi Directory & Marketplace</h1>
+        <div class="search-box">
+            <input type="text" placeholder="Search clothes, snacks, vendors...">
+            <button><i class="fa-solid fa-magnifying-glass"></i></button>
         </div>
-        <button class="user-auth-btn" id="authBtn" onclick="authenticateWithPi()">
-            <i class="fa-solid fa-wallet"></i> Login
-        </button>
     </header>
 
-    <!-- HOME TAB -->
-    <div id="homeTab" class="tab-content active">
-        <div class="hero">
-            <h1>Global Pi Marketplace</h1>
-            <p style="font-size: 0.8rem; color: var(--text-muted);">Buy products & services directly with Pi Network</p>
-            
-            <div class="search-box">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="searchInput" onkeyup="filterProducts()" placeholder="Search products, merchants, or services...">
-            </div>
+    <!-- Categories for all types of businesses -->
+    <div class="categories">
+        <div class="category-chip active">All Products</div>
+        <div class="category-chip">Clothing & Textiles</div>
+        <div class="category-chip">Home Bakery & Snacks</div>
+        <div class="category-chip">Beauty & Cosmetics</div>
+        <div class="category-chip">Electronics</div>
+    </div>
+
+    <!-- Call to action for vendors (Home businesses, big stores, etc.) -->
+    <div class="banner">
+        <h2>Are you a Merchant or Home Vendor?</h2>
+        <p>List your store, clothes, or snacks and receive Pi payments directly!</p>
+        <button class="btn-vendor-register btn-nav" data-page="dashboard.html">Register Your Shop / Add Product</button>
+    </div>
+
+    <!-- Products Showcase -->
+    <div class="products-grid">
+        <!-- Fashion Vendor Product -->
+        <div class="product-card">
+            <img src="https://via.placeholder.com/150?text=Atamfa+Fabric" alt="Atamfa Fabric">
+            <div class="product-title">Quality Atamfa Fabric (4 Yards)</div>
+            <div class="vendor-name"><i class="fa-solid fa-store"></i> Royal Textiles</div>
+            <div class="product-price">12.50 Pi</div>
+            <button class="btn-pi-pay" data-price="12.50"><i class="fa-solid fa-wallet"></i> Pay with Pi</button>
         </div>
 
-        <div class="categories">
-            <button class="cat-btn active" onclick="filterCategory('all', this)">All</button>
-            <button class="cat-btn" onclick="filterCategory('electronics', this)">Electronics</button>
-            <button class="cat-btn" onclick="filterCategory('fashion', this)">Fashion</button>
-            <button class="cat-btn" onclick="filterCategory('services', this)">Services</button>
-            <button class="cat-btn" onclick="filterCategory('groceries', this)">Groceries</button>
-        </div>
-
-        <div class="products-grid" id="productsGrid">
-            <!-- Products injected dynamically by JavaScript -->
+        <!-- Home-based Snack Vendor Product -->
+        <div class="product-card">
+            <img src="https://via.placeholder.com/150?text=Delicious+Snacks" alt="Homemade Snacks">
+            <div class="product-title">Homemade Sweet Snacks Box</div>
+            <div class="vendor-name"><i class="fa-solid fa-house-user"></i> Aisha's Home Kitchen</div>
+            <div class="product-price">2.00 Pi</div>
+            <button class="btn-pi-pay" data-price="2.00"><i class="fa-solid fa-wallet"></i> Pay with Pi</button>
         </div>
     </div>
 
-    <!-- CATEGORIES TAB -->
-    <div id="categoriesTab" class="tab-content">
-        <div style="padding: 1.5rem; text-align: center;">
-            <h2>Categories</h2>
-            <p style="color: var(--text-muted); margin-top: 10px;">Select a category to explore items:</p>
-            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
-                <button class="cat-btn" style="padding: 15px;" onclick="switchTab('home'); filterCategory('electronics');">🔌 Electronics</button>
-                <button class="cat-btn" style="padding: 15px;" onclick="switchTab('home'); filterCategory('fashion');">👟 Fashion</button>
-                <button class="cat-btn" style="padding: 15px;" onclick="switchTab('home'); filterCategory('services');">🛠️ Services</button>
-                <button class="cat-btn" style="padding: 15px;" onclick="switchTab('home'); filterCategory('groceries');">🛒 Groceries</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- CART TAB -->
-    <div id="cartTab" class="tab-content">
-        <div class="cart-container">
-            <h2>Your Shopping Cart</h2>
-            <br>
-            <div id="cartItemsList">
-                <p style="color: var(--text-muted);">Your cart is empty.</p>
-            </div>
-            <div id="cartSummary" style="margin-top: 20px; display: none;">
-                <h3>Total: <span id="cartTotal" style="color: var(--accent-gold);">0 Pi</span></h3>
-                <br>
-                <button class="buy-btn" style="padding: 12px; font-size: 1rem;" onclick="checkoutCart()">Checkout with Pi</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- PROFILE TAB -->
-    <div id="profileTab" class="tab-content">
-        <div class="profile-container" style="text-align: center;">
-            <h2>User Profile</h2>
-            <br>
-            <i class="fa-solid fa-circle-user" style="font-size: 4rem; color: var(--accent-purple);"></i>
-            <h3 id="profileUsername" style="margin-top: 10px;">Guest Pioneer</h3>
-            <p style="color: var(--text-muted); font-size: 0.85rem;" id="profileStatus">Not logged in</p>
-            <br>
-            <button class="buy-btn" style="background: var(--accent-purple);" onclick="authenticateWithPi()">Connect Pi Wallet</button>
-        </div>
-    </div>
-
-    <!-- Bottom Navigation -->
-    <div class="bottom-nav">
-        <button class="nav-item active" onclick="switchTab('home', this)">
-            <i class="fa-solid fa-house"></i> Home
+    <!-- Bottom Navigation Bar -->
+    <nav class="bottom-nav">
+        <button class="btn-nav active" data-page="index.html">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
         </button>
-        <button class="nav-item" onclick="switchTab('categories', this)">
-            <i class="fa-solid fa-list"></i> Categories
+        <button class="btn-nav" data-page="dashboard.html">
+            <i class="fa-solid fa-shop"></i>
+            <span>Dashboard</span>
         </button>
-        <button class="nav-item" onclick="switchTab('cart', this)">
-            <i class="fa-solid fa-cart-shopping"></i> Cart (<span id="cartCount">0</span>)
+        <button class="btn-pi-auth btn-nav">
+            <i class="fa-solid fa-user"></i>
+            <span>Login</span>
         </button>
-        <button class="nav-item" onclick="switchTab('profile', this)">
-            <i class="fa-solid fa-user"></i> Profile
-        </button>
-    </div>
+    </nav>
 
-    <script>
-        // Pi SDK Initialization
-        const Pi = window.Pi;
-        Pi.init({ version: "2.0", sandbox: true });
-
-        let currentUser = null;
-        let cart = [];
-
-        const products = [
-            { id: 1, name: "Wireless Headphones", price: 15.00, category: "electronics", img: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500" },
-            { id: 2, name: "Smart Fitness Watch", price: 25.50, category: "electronics", img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500" },
-            { id: 3, name: "Sports Running Shoes", price: 18.00, category: "fashion", img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500" },
-            { id: 4, name: "Fresh Grocery Pack", price: 5.00, category: "groceries", img: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=500" }
-        ];
-
-        window.addEventListener('DOMContentLoaded', () => {
-            renderProducts(products);
-            authenticateWithPi();
-        });
-
-        // Display Products
-        function renderProducts(items) {
-            const grid = document.getElementById('productsGrid');
-            grid.innerHTML = "";
-            
-            if(items.length === 0) {
-                grid.innerHTML = "<p style='color:var(--text-muted); grid-column:1/-1; text-align:center;'>No products found.</p>";
-                return;
-            }
-
-            items.forEach(p => {
-                grid.innerHTML += `
-                    <div class="product-card">
-                        <img src="${p.img}" class="product-img" alt="${p.name}">
-                        <div class="product-info">
-                            <div class="product-title">${p.name}</div>
-                            <div class="product-price"><i class="fa-solid fa-coins"></i> ${p.price.toFixed(2)} Pi</div>
-                            <button class="buy-btn" onclick="addToCart(${p.id})">
-                                <i class="fa-solid fa-cart-plus"></i> Add to Cart
-                            </button>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        // Search Filter
-        function filterProducts() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = products.filter(p => p.name.toLowerCase().includes(query));
-            renderProducts(filtered);
-        }
-
-        // Category Filter
-        function filterCategory(cat, btn) {
-            if(btn) {
-                document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-            }
-            if(cat === 'all') {
-                renderProducts(products);
-            } else {
-                const filtered = products.filter(p => p.category === cat);
-                renderProducts(filtered);
-            }
-        }
-
-        // Switch Navigation Tabs
-        function switchTab(tabName, btn) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-
-            document.getElementById(tabName + 'Tab').classList.add('active');
-            if(btn) btn.classList.add('active');
-        }
-
-        // Cart Actions
-        function addToCart(productId) {
-            const item = products.find(p => p.id === productId);
-            cart.push(item);
-            updateCart();
-            alert(`${item.name} added to cart!`);
-        }
-
-        function updateCart() {
-            document.getElementById('cartCount').innerText = cart.length;
-            const list = document.getElementById('cartItemsList');
-            const summary = document.getElementById('cartSummary');
-            
-            if(cart.length === 0) {
-                list.innerHTML = "<p style='color: var(--text-muted);'>Your cart is empty.</p>";
-                summary.style.display = "none";
-                return;
-            }
-
-            list.innerHTML = "";
-            let total = 0;
-            cart.forEach((item, index) => {
-                total += item.price;
-                list.innerHTML += `
-                    <div class="cart-item">
-                        <div>
-                            <strong>${item.name}</strong>
-                            <div style="color:var(--accent-gold);">${item.price} Pi</div>
-                        </div>
-                        <button style="background:red; color:white; border:none; padding:5px 10px; border-radius:5px;" onclick="removeFromCart(${index})">Remove</button>
-                    </div>
-                `;
-            });
-
-            document.getElementById('cartTotal').innerText = `${total.toFixed(2)} Pi`;
-            summary.style.display = "block";
-        }
-
-        function removeFromCart(index) {
-            cart.splice(index, 1);
-            updateCart();
-        }
-
-        // Pi Authentication
-        async function authenticateWithPi() {
-            try {
-                const scopes = ['username', 'payments'];
-                const auth = await Pi.authenticate(scopes, function(payment) {});
-                currentUser = auth.user;
-                
-                document.getElementById('authBtn').innerHTML = `<i class="fa-solid fa-circle-check"></i> @${currentUser.username}`;
-                document.getElementById('authBtn').style.background = "#10b981";
-                
-                document.getElementById('profileUsername').innerText = `@${currentUser.username}`;
-                document.getElementById('profileStatus').innerText = "Pi Wallet Connected";
-            } catch (error) {
-                console.error("Pi Auth Error:", error);
-            }
-        }
-
-        // Checkout Cart
-        function checkoutCart() {
-            if(cart.length === 0) return;
-            const total = cart.reduce((sum, item) => sum + item.price, 0);
-
-            Pi.createPayment({
-                amount: total,
-                memo: `Order payment for ${cart.length} items`,
-                metadata: { cartItems: cart }
-            }, {
-                onReadyForServerCompletion: function(paymentId, txid) {
-                    alert(`Payment Successful! Transaction ID: ${txid}`);
-                    cart = [];
-                    updateCart();
-                    switchTab('home');
-                }
-            });
-        }
-    </script>
+    <!-- Pi SDK and Main JavaScript -->
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>
